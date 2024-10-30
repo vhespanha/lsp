@@ -14,7 +14,7 @@ func EncodeMessage(msg any) string {
 		panic(err)
 	}
 
-	return fmt.Sprintf("Content-Lenght: %d\r\n\r\n%s", len(content), content)
+	return fmt.Sprintf("Content-Length: %d\r\n\r\n%s", len(content), content)
 }
 
 type BaseMessage struct {
@@ -27,7 +27,7 @@ func DecodeMessage(msg []byte) (string, []byte, error) {
 		return "", nil, errors.New("did not find separator")
 	}
 
-	contentLengthBytes := header[len("Content-Lenght: "):]
+	contentLengthBytes := header[len("Content-Length: "):]
 	contentLength, err := strconv.Atoi(string(contentLengthBytes))
 	if err != nil {
 		return "", nil, err
@@ -47,7 +47,7 @@ func Split(data []byte, _ bool) (advance int, token []byte, err error) {
 		return 0, nil, nil
 	}
 
-	contentLengthBytes := header[len("Content-Lenght: "):]
+	contentLengthBytes := header[len("Content-Length: "):]
 	contentLength, err := strconv.Atoi(string(contentLengthBytes))
 	if err != nil {
 		return 0, nil, err

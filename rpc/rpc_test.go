@@ -11,7 +11,7 @@ type EncodingExample struct {
 }
 
 func TestEnconde(t *testing.T) {
-	expected := "Content-Lenght: 16\r\n\r\n{\"Testing\":true}"
+	expected := "Content-Length: 16\r\n\r\n{\"Testing\":true}"
 	actual := rpc.EncodeMessage(EncodingExample{Testing: true})
 
 	if expected != actual {
@@ -20,7 +20,7 @@ func TestEnconde(t *testing.T) {
 }
 
 func TestDecode(t *testing.T) {
-	incomingMessage := "Content-Lenght: 15\r\n\r\n{\"Method\":\"hi\"}"
+	incomingMessage := "Content-Length: 15\r\n\r\n{\"Method\":\"hi\"}"
 	method, content, err := rpc.DecodeMessage([]byte(incomingMessage))
 	contentLength := len(content)
 	if err != nil {
