@@ -56,7 +56,8 @@ func handleMessage(logger *log.Logger, state analysis.State, method string, cont
 	case "textDocument/didOpen":
 		var request lsp.DidOpenTextDocumentNotification
 		if err := json.Unmarshal(contents, &request); err != nil {
-			logger.Printf("couldn't parse following content: %s", err)
+			logger.Printf("textDocument/didOpen: %s", err)
+			return
 		}
 		logger.Printf(
 			"Opened: %s %s",
@@ -64,6 +65,20 @@ func handleMessage(logger *log.Logger, state analysis.State, method string, cont
 			request.Params.TextDocument.Text,
 		)
 		state.OpenDocument(request.Params.TextDocument.URI, request.Params.TextDocument.Text)
+
+	case "textDocument/didChange":
+		var request lsp.TextDocumentDidChangeNotification
+		if err := json.Unmarshal(contents, &request); err != nil {
+			logger.Printf("textDocument/didChange: %s", err)
+			return
+		}
+		logger.Printf(
+			"Changed: %s",
+			request.Params.TextDocument.URI,
+		)
+		for _, change := range request.Params.ContentChanges {
+			state.UpdateDocument(request.Params.TextDocument.URI, change.Text)
+		}
 	}
 }
 
