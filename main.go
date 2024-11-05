@@ -60,7 +60,7 @@ func handleMessage(logger *log.Logger, state analysis.State, method string, cont
 			return
 		}
 		logger.Printf(
-			"Opened: %s %s",
+			"Opened: %s",
 			request.Params.TextDocument.URI,
 			request.Params.TextDocument.Text,
 		)
