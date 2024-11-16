@@ -20,6 +20,7 @@ func main() {
 	scanner.Split(rpc.Split)
 
 	state := analysis.NewState()
+	state.SetLogger(logger)
 	writer := os.Stdout
 
 	for scanner.Scan() {
@@ -30,14 +31,14 @@ func main() {
 			continue
 		}
 
-		handleMessage(logger, writer, state, method, contents)
+		handleMessage(logger, writer, &state, method, contents)
 	}
 }
 
 func handleMessage(
 	logger *log.Logger,
 	writer io.Writer,
-	state analysis.State,
+	state *analysis.State,
 	method string,
 	contents []byte,
 ) {
@@ -89,20 +90,16 @@ func handleMessage(
 		}
 
 	case "textDocument/hover":
-		var request lsp.HoverResponse
+		var request lsp.HoverRequest
 		if err := json.Unmarshal(contents, &request); err != nil {
 			logger.Printf("textDocument/hover: %s", err)
 			return
 		}
-		response := lsp.HoverResponse{
-			Response: lsp.Response{
-				RPC: "2.0",
-				ID:  request.ID,
-			},
-			Result: lsp.HoverResult{
-				Contents: "Hello from LSP",
-			},
-		}
+		response := state.Hover(
+			request.ID,
+			request.Params.TextDocument.URI,
+			request.Params.Position,
+		)
 		writeResponse(writer, response)
 	}
 }
