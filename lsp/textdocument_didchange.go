@@ -11,5 +11,6 @@ type DidChangeTextDocumentParams struct {
 }
 
 type TextDocumentContentChangeEvent struct {
+	// New text for the whole document
 	Text string `json:"text"`
 }
