@@ -18,16 +18,35 @@ func NewState() State {
 	return State{Documents: map[string]string{}}
 }
 
+func getFileDiagnostics(text string) []lsp.Diagnostic {
+	diagnostics := []lsp.Diagnostic{}
+	for row, line := range strings.Split(text, "\n") {
+		// diagnostics = append(diagnostics, )
+		if strings.Contains(line, "Foo") {
+			idx := strings.Index(line, "Foo")
+			diagnostics = append(diagnostics, lsp.Diagnostic{
+				Range:    LineRange(row, idx, idx+len("Foo")),
+				Severity: 1,
+				Source:   "LSP diagnostics",
+				Message:  "Foo should be Bar.",
+			})
+		}
+	}
+	return diagnostics
+}
+
 func (s *State) SetLogger(logger *log.Logger) {
 	s.logger = logger
 }
 
-func (s *State) OpenDocument(uri, text string) {
+func (s *State) OpenDocument(uri, text string) []lsp.Diagnostic {
 	s.Documents[uri] = text
+	return getFileDiagnostics(text)
 }
 
-func (s *State) UpdateDocument(uri, text string) {
+func (s *State) UpdateDocument(uri, text string) []lsp.Diagnostic {
 	s.Documents[uri] = text
+	return getFileDiagnostics(text)
 }
 
 func (s *State) Hover(id int, uri string, position lsp.Position) lsp.HoverResponse {
