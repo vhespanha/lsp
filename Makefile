@@ -1,4 +1,4 @@
-.PHONY: build clean
+.PHONY: build clean install
 
 build:
 	@mkdir -p bin
@@ -6,3 +6,7 @@ build:
 
 clean:
 	@rm -rf bin/
+
+install:
+	@mkdir -p $(HOME)/.local/bin
+	@cp bin/lsp $(HOME)/.local/bin/lsp
