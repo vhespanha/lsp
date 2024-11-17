@@ -3,6 +3,7 @@ package analysis
 import (
 	"fmt"
 	"log"
+	"strings"
 
 	"git.sr.ht/~vhespanha/lsp/lsp"
 )
@@ -72,6 +73,63 @@ func (s *State) Definition(
 					Character: 0,
 				},
 			},
+		},
+	}
+}
+
+func (s *State) TextDocumentCodeAction(
+	id int,
+	uri string,
+) lsp.TextDocumentCodeActionResponse {
+	text := s.Documents[uri]
+
+	actions := []lsp.CodeAction{}
+	for row, line := range strings.Split(text, "\n") {
+		idx := strings.Index(line, "Foo")
+		if idx >= 0 {
+			fooToBar := map[string][]lsp.TextEdit{}
+			fooToBar[uri] = []lsp.TextEdit{
+				{
+					Range:   LineRange(row, idx, idx+len("Foo")),
+					NewText: "Bar",
+				},
+			}
+			actions = append(actions, lsp.CodeAction{
+				Title: "Foo to Bar",
+				Edit:  &lsp.WorkspaceEdit{Changes: fooToBar},
+			})
+			fooToBaz := map[string][]lsp.TextEdit{}
+			fooToBaz[uri] = []lsp.TextEdit{
+				{
+					Range:   LineRange(row, idx, idx+len("Foo")),
+					NewText: "Baz",
+				},
+			}
+			actions = append(actions, lsp.CodeAction{
+				Title: "Foo to Baz",
+				Edit:  &lsp.WorkspaceEdit{Changes: fooToBaz},
+			})
+		}
+	}
+	response := lsp.TextDocumentCodeActionResponse{
+		Response: lsp.Response{
+			RPC: "2.0",
+			ID:  &id,
+		},
+		Result: actions,
+	}
+	return response
+}
+
+func LineRange(line, start, end int) lsp.Range {
+	return lsp.Range{
+		Start: lsp.Position{
+			Line:      line,
+			Character: start,
+		},
+		End: lsp.Position{
+			Line:      line,
+			Character: end,
 		},
 	}
 }
