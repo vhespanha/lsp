@@ -13,7 +13,7 @@ import (
 )
 
 func main() {
-	logger := getLogger("/home/vinicius/projects/lsp/log.txt")
+	logger := getLogger("$HOME/.local/share/educationalsp/log.txt")
 	logger.Println("Logger started")
 
 	scanner := bufio.NewScanner(os.Stdin)
