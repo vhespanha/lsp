@@ -121,6 +121,26 @@ func (s *State) TextDocumentCodeAction(
 	return response
 }
 
+func (s *State) TextDocumentCompletion(
+	id int,
+	uri string,
+) lsp.CompletionResponse {
+	items := []lsp.CompletionItem{{
+		Label:         "Melange",
+		Detail:        "It must flow...",
+		Documentation: "Melange, often referred to as 'the spice', is the fictional psychedelic drug central to the Dune series of science fiction novels by Frank Herbert and derivative works.",
+	}}
+
+	response := lsp.CompletionResponse{
+		Response: lsp.Response{
+			RPC: "2.0",
+			ID:  &id,
+		},
+		Result: items,
+	}
+	return response
+}
+
 func LineRange(line, start, end int) lsp.Range {
 	return lsp.Range{
 		Start: lsp.Position{
